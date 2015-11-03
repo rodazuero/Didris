@@ -3,13 +3,6 @@ function [ct, at, ht, ut] = utility(par, gr, b, theta, w_l, w_h, r, P_h)
 a_opt = @(a, h) (b - a + w_l*(1-h) - P_h*h)^(-par.psi) - ...
                 par.beta*(1+r)*( ((h*theta)^par.eta)    *(w_h + (1+r)*a)^(-par.psi) + ...
                              (1-((h*theta)^par.eta))*(w_l + (1+r)*a)^(-par.psi));
-
-% lim_min = -w_l/(1+r);
-% lim_max_0 = b + w_l ;
-% lim_max_1 = b - P_h ;
-% 
-% a_0 = bisection(@(x) a_opt(x,0), lim_min, lim_max_0);
-% a_1 = bisection(@(x) a_opt(x,1), lim_min, lim_max_1);
                          
 a_0 = fsolve(@(x) a_opt(x,0), 0);   % Without college education
 a_1 = fsolve(@(x) a_opt(x,1), 0);   % With college education
