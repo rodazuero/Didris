@@ -1,3 +1,30 @@
+%% Try to plot  the residual function a_opt
+
+%1. Defining the handle function to solve
+
+%For the parameters, run the file "initialization.m".
+%Rest of parameters not defined in the file
+theta=0.4;
+b=2;
+h=1;
+Ph=1;
+
+a_opt = @(a, h) (b - a + w_l*(1-h) - P_h*h)^(-par.psi) - ...
+                par.beta*(1+r)*( ((h*theta)^par.eta)    *(w_h + (1+r)*a)^(-par.psi) + ...
+                             (1-((h*theta)^par.eta))*(w_l + (1+r)*a)^(-par.psi));
+                         
+
+
+%Plot the function for a grid of a from min to max
+amin=-w_l/(1+r)+1.0e-2;
+amax=b+w_l*(1-h)-Ph*h-1.0e-2;
+agrid=amin:0.001:amax;
+[~,MM]=size(agrid);
+yyyy=zeros(MM,1);
+for ii=1:1:MM
+    yyyy(ii)=a_opt(agrid(ii),1);
+end
+plot(agrid,yyyy)
 
 
 w_l=1; w_h = ; r=0.05;
