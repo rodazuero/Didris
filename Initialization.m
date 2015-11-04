@@ -51,7 +51,7 @@ P_h     = 1;      % Price of college
 %--------------------------%
 
 % Bequests grid
-gr.nb       = 31;
+gr.nb       = 15;
 gr.bgrid    = linspace(0, 5, gr.nb);           % Grid for health
 
 % Bonds
@@ -61,7 +61,7 @@ gr.Amax    = 20;
 gr.agrid   = linspace(-gr.Abar, gr.Amax, gr.na);      % Grid for savings
 
 % Ability: theta
-gr.ntheta       = 31;
+gr.ntheta       = 15;
 gr.thetagrid    = linspace(0, 1, gr.ntheta);          % Grid for savings
 
 

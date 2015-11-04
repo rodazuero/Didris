@@ -4,8 +4,8 @@ a_opt = @(a, h) (b - a + w_l*(1-h) - P_h*h)^(-par.psi) - ...
                 par.beta*(1+r)*( ((h*theta)^par.eta)    *(w_h + (1+r)*a)^(-par.psi) + ...
                              (1-((h*theta)^par.eta))*(w_l + (1+r)*a)^(-par.psi));
                          
-a_0 = fsolve(@(x) a_opt(x,0), 0);   % Without college education
-a_1 = fsolve(@(x) a_opt(x,1), 0);   % With college education
+a_0 = fsolve(@(x) a_opt(x,0), 0.0001);   % Without college education
+a_1 = fsolve(@(x) a_opt(x,1), 0.0001);   % With college education
 
 % Savings must be above borrowing constraint, and cannot make consumption
 % negative
