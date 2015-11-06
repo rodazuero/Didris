@@ -1,16 +1,9 @@
-// [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(RcppGSL)]]
 
 #include <RcppArmadillo.h>
 #include <RcppGSL.h>
 #include <algorithm>
-#include <boost/math/distributions/normal.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/tools/roots.hpp>
-#include <boost/random.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <ctime>
 #include <cmath>
 #include <fstream>

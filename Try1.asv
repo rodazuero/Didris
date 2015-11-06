@@ -34,16 +34,13 @@ t = fminunc(@(x) general_eq(par, gr, P_h, x(1), x(2), x(3)), [1, 3.7, 0.3], opti
 
 t = fminunc(@(x) general_eq(par, gr, P_h, 1, x(1), x(2)), [3.7, 0.2], optimset('MaxIter',10))
 
-whgrid = 3.0:0.5:8;
-rgrid = 0.02:0.01:0.15;
-wlgrid = 0.3:0.1:1;
+wgrid = 6.0:0.5:8;
+rgrid = 0.04:0.001:0.05;
 
-mat = zeros(numel(wlgrid),numel(whgrid),numel(rgrid));
-for iw_l = 1:numel(wlgrid)
-    for iw_h = 1:numel(whgrid)
-        for ir = 1:numel(rgrid)
-            mat(iw_l, iw_h, ir) = general_eq(par, gr, P_h, wlgrid(iw_l), whgrid(iw_h), rgrid(ir));
-        end
+mat = zeros(numel(wgrid),numel(rgrid));
+for iw_h = 1:numel(wgrid)
+    for ir = 1:numel(rgrid)
+        mat(iw_h, ir) = general_eq(par, gr, P_h, w_l, wgrid(iw_h), rgrid(ir));
     end
 end
 

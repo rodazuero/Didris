@@ -1,7 +1,7 @@
 function [ct, at, ht, ut] = utility(par, gr, b, theta, w_l, w_h, r, P_h)
 
-amin= -w_l/(1+r) + 1.0e-2;
-amax= b + w_l - 1.0e-2;
+amin= -w_l/(1+r)+1.0e-2;
+amax= b + w_l-1.0e-2;
 a_0 = bisection(@(x) (b - x + w_l)^(-par.psi) - par.beta*(1+r)*(w_l + (1+r)*x)^(-par.psi), amin, amax);
 
 if a_0 < - gr.Abar

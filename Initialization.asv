@@ -55,8 +55,8 @@ gr.nb       = 15;
 gr.bgrid    = linspace(0, 5, gr.nb);           % Grid for health
 
 % Bonds
-gr.na      = 25;
-gr.Abar    = 0;                                 % Exogenous borrowing constraint
+gr.na      = 5;
+gr.Abar    = 5;                                 % Exogenous borrowing constraint
 gr.Amax    = 20;
 gr.agrid   = linspace(-gr.Abar, gr.Amax, gr.na);      % Grid for savings
 

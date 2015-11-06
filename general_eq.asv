@@ -1,5 +1,4 @@
-function [w_l_res, w_h_res, r_res] = general_eq(par, gr, P_h, w_l, w_h, r)
-% function error = general_eq(par, gr, P_h, w_l, w_h, r)
+function error = general_eq(par, gr, P_h, w_l, w_h, r)
 
 H = zeros(gr.nb, gr.ntheta);
 L = zeros(gr.nb, gr.ntheta);
@@ -26,6 +25,6 @@ r_res   = par.A * (par.alpha_h * par.z * (HH^(1-(1/par.phi))) + (1 - par.alpha_h
             * (1-par.gamma) * (KK^(-par.gamma));
 
 % error = (w_l - w_l_res)^2 + (w_h - w_h_res)^2 + (r - r_res)^2;
-% error = (w_h - w_h_res)^2 + (r - r_res)^2;
+error = (w_h - w_h_res)^2 + (r - r_res)^2;
         
 end
