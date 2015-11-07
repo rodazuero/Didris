@@ -1,9 +1,16 @@
+// [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(RcppGSL)]]
 
 #include <RcppArmadillo.h>
 #include <RcppGSL.h>
 #include <algorithm>
+#include <boost/math/distributions/normal.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/tools/roots.hpp>
+#include <boost/random.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <ctime>
 #include <cmath>
 #include <fstream>
@@ -73,14 +80,13 @@ long double Assetsolver(double b, double wl, double wh, double Ph, double h,
         ppsi, ttheta, bbeta};
     F.function= &F_root_a;
     F.params= &params;
-    cout << F.params << endl;
     T = gsl_root_fsolver_brent;
     s=gsl_root_fsolver_alloc (T);
     gsl_root_fsolver_set (s, &F, x_lo, x_hi);
-    printf ("using %s method /n", gsl_root_fsolver_name (s));
-    printf ("%5s [%9s, %9s] %9s %10s %9s/n",
-       "iter" , "lower" , "upper" , "root" , "err" , "err(est)");
-    cout << " whe are here 6" << endl;
+    //printf ("using %s method /n", gsl_root_fsolver_name (s));
+    //printf ("%5s [%9s, %9s] %9s %10s %9s/n",
+    //   "iter" , "lower" , "upper" , "root" , "err" , "err(est)");
+    //cout << " whe are here 6" << endl;
     do{
         iter++;
         status = gsl_root_fsolver_iterate (s);
@@ -89,15 +95,15 @@ long double Assetsolver(double b, double wl, double wh, double Ph, double h,
         x_hi = gsl_root_fsolver_x_upper (s);
         status = gsl_root_test_interval (x_lo, x_hi,0, 0.001);
         
-        if (status == GSL_SUCCESS)
-         printf ("Converged:\n");
-        printf ("%5d [%.7f, %.7f] %.7f %+.7f %.7f\n",
-        iter, x_lo, x_hi,r, r - r_expected, x_hi - x_lo);
+        //if (status == GSL_SUCCESS)
+         //printf ("Converged:\n");
+        //printf ("%5d [%.7f, %.7f] %.7f %+.7f %.7f\n",
+        //iter, x_lo, x_hi,r, r - r_expected, x_hi - x_lo);
     }
     while (status == GSL_CONTINUE && iter < max_iter);
     gsl_root_fsolver_free (s);
     //Borrowing constraint
-    if (r>=Amax){
+    if (r<=Amax){
         r=Amax;
     }
     return(r);
@@ -119,16 +125,125 @@ long double Hopt(vec par, double b, double ttheta,double wl, double wh, double i
     double ppsi=par[2];
     
     //2. Get optimal assets holding in both scenarios: educ or not
-    double a0=Assetsolver(b,wl, wh,  Ph,  1, eeta, i,  ppsi,  ttheta,
+    double a0=Assetsolver(b,wl, wh,  Ph,  0, eeta, i,  ppsi,  ttheta,
                           bbeta,  Amax);
-    double a1=Assetsolver(b,wl, wh,  Ph,  0, eeta, i,  ppsi,  ttheta,
+    double a1=Assetsolver(b,wl, wh,  Ph,  1, eeta, i,  ppsi,  ttheta,
                           bbeta,  Amax);
-    
     //3. Comparing utilities in both cases
     U0=pow(b-a0+wl,1-ppsi)/(1-ppsi)+bbeta*pow(wl+(1+i)*a0,1-ppsi)/(1-ppsi);
     U1=pow(b-a1-Ph,1-ppsi)/(1-ppsi)+bbeta*(
         pow(ttheta,eeta)*pow(wh+(1+i)*a1,1-ppsi)/(1-ppsi)+
-        (1-pow(ttheta,eeta))*(wl+(1+i)*a1,1-ppsi)/(1-ppsi)
-                                           );
+        (1-pow(ttheta,eeta))*pow(wl+(1+i)*a1,1-ppsi)/(1-ppsi));
     return(U1>=U0);
+}
+
+// Testing the function solver for assets
+// [[Rcpp::export]]
+double F_root_ab (double a, double wl, double h, double Ph,
+                  double ppsi, double bbeta, double ttheta,
+                  double wh, double eeta, double b, double i){
+    //0. Assigning the parameters
+
+    //1. Getting the function residual to obtain the root
+    double residual=pow(b-a+wl*(1-h)-Ph*h,-ppsi)-
+    bbeta*(1+i)*(pow(h*ttheta,eeta)*pow((wh+(1+i)*a),-ppsi)+
+                 (1-pow(h*ttheta,eeta))*pow(wl+(1+i)*a,-ppsi));
+    return(residual);
+}
+
+//==========================================
+// General equilibrium error term
+//==========================================
+// [[Rcpp::export]]
+long double hres(vec par, vec GENERAL, double Ph,
+                 double Amax,
+                 double tthetamin, double tthetamax, double tthetastep,
+                 double bbmin, double bbmax, double bbstep){
+    
+    //Block of parameter definitions
+    double ppsi=par[0];
+    double bbeta=par[1];
+    double eeta=par[2];
+    double aalphah=par[3];
+    double z=par[4];
+    double pphi=par[5];
+    double ggamma=par[6];
+    double A=par[7];
+    double wl=exp(GENERAL[0]);
+    double wh=exp(GENERAL[1]);
+    double i=exp(GENERAL[2]);
+    
+    
+    //Definition of variables used in the function
+    double HHdecision=0; //Optimal decision of education
+    double AAdecision=0; //Optimal decision of assets holdings
+    double HH=0; //Total number of people being educated
+    double LL=0; //Total number of uneducated people in the economy
+    double AA=0; //Total level of assets holdings in the economy
+    
+    double wlres=0; //Error term in the wage low
+    double whres=0; //Error term in the wage high
+    double ires=0;//Error term in the interest rate
+    
+    vec Hpar(4);
+    Hpar[0]=bbeta;
+    Hpar[1]=eeta;
+    Hpar[2]=ppsi;
+    
+    for (double bb=bbmin;bb<=bbmax;bb=bb+bbstep){
+        for (double tt=tthetamin; tt<=tthetamax;tt=tt+tthetastep){
+            
+            //Solving optimal level of education
+            HHdecision=Hopt(Hpar,
+                             bb,
+                             tt,
+                             wl,
+                             wh,
+                             i,
+                             Ph,
+                             Amax);
+            
+            //Solving optimal level of assets holdings
+            AAdecision=Assetsolver(bb,
+                                   wl,
+                                   wh,
+                                   Ph,
+                                   HHdecision,
+                                   eeta,
+                                   i,
+                                   ppsi,
+                                   tt,
+                                   bbeta,
+                                   Amax);
+            
+            
+       
+            //Adding up educated people
+            HH+=HHdecision;
+            //Adding up assets
+            AA+=AAdecision;
+            //Adding up uneducated people
+            LL+=1-HHdecision;
+
+            
+        }
+    }
+    
+
+    wlres=A*ggamma*pow(aalphah*z*(pow(HH,1-(1/pphi)))+
+                    (1-aalphah)*pow(LL,1-(1/pphi)),ggamma*(pphi/(pphi-1))-1)*
+                    (1-aalphah)*pow(LL,-1/pphi)*pow(AA,1-ggamma);
+
+    whres=A*ggamma*pow(aalphah*z*(pow(HH,1-(1/pphi)))+
+                       (1-aalphah)*pow(LL,1-(1/pphi)),ggamma*(pphi/(pphi-1))-1)*
+                        (aalphah*z)*pow(HH,-1/pphi)*pow(AA,1-ggamma);
+
+    
+    ires=A*pow(aalphah*z*pow(HH,1-(1/pphi))
+    +(1-aalphah)*pow(LL,1-(1/pphi)),ggamma*pphi/(pphi-1))*
+    (1-ggamma)*pow(AA,-ggamma);
+
+    
+    double error=pow(wlres-wl,2)+pow(whres-wh,2)+pow(i-ires,2);
+    return(error);
 }
