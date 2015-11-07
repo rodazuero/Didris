@@ -1,0 +1,212 @@
+\documentclass[11pt]{article}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amsthm,amssymb,bm}
+%\usepackage{longtable}
+\usepackage[applemac]{inputenc}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{todonotes}
+\usepackage{menukeys}
+\usepackage{afterpage}
+\usepackage{pdflscape}
+\usepackage{libertine} %For empty horizontal spaces
+\usepackage[capposition=top]{floatrow} %This is used to use notes below figures. Command is float row. 
+\usepackage{amsthm}
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\cov}{cov}
+
+\usepackage{hyperref}
+\hypersetup{
+  letterpaper,
+  bookmarksnumbered,
+  bookmarksopen,
+  bookmarksopenlevel=0,
+  colorlinks,
+% for colors, check package xcolor
+%   anchorcolor=anchorcolor,
+    citecolor=blue,
+%   linkcolor=linkcolor,
+	pdfauthor={Rodrigo Azuero Melo},
+	pdftitle={Referee report},
+	pdfsubject={},
+	pdfkeywords={},
+%   plainpages=false,
+%   urlcolor=urlcolor
+}
+\usepackage{comment}
+\usepackage{apacite}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{bbm}
+\usepackage{caption}
+\usepackage{float}
+%\usepackage{keyval}
+\usepackage{enumerate}
+%\usepackage{floatrow}
+%\usepackage[captionskip=-2pt]{subfig}
+%\usepackage{subfig}
+\usepackage[letterpaper,centering]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{caption}
+
+\long\def\/*#1*/{}  %%This is for defining the function comment in multiple lines with \/* starting and */ finishing. 
+\onehalfspacing
+
+%\usepackage[thmmarks, thref, hyperref]{ntheorem}
+%%\usepackage[thmmarks, thref, hyperref]{ntheorem}
+%
+%\theoremsymbol{\ensuremath{_\Box}}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{problem}{Problem}
+\newtheorem{axiom}{Axiom}
+\newtheorem{remark}{Remark}[section]
+%
+%\theoremsymbol{\ensuremath{_\blacksquare}}
+%\theorembodyfont{\normalfont}
+%\newtheorem*{proof}{Proof}
+%\newtheorem*{claim}{Claim}
+
+
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{ifthen}
+\usepackage{listings}
+\usepackage{courier}
+
+\definecolor{light-gray}{gray}{0.90}
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
+
+% For faster processing, load Matlab syntax for listings
+\lstloadlanguages{Matlab}%
+\lstset{language=Matlab,
+        frame=single,
+        basicstyle=\small\ttfamily,
+        keywordstyle=[1]\color{Blue}\bf,
+        keywordstyle=[2]\color{Purple},
+        keywordstyle=[3]\color{Blue}\underbar,
+        identifierstyle=,
+        commentstyle=\usefont{T1}{pcr}{m}{sl}\color{MyDarkGreen}\small,
+        stringstyle=\color{Purple},
+        showstringspaces=false,
+        tabsize=5,
+        % Put standard MATLAB functions not included in the default
+        % language here
+        morekeywords={xlim,ylim,var,alpha,factorial,poissrnd,normpdf,normcdf},
+        % Put MATLAB function parameters here
+        morekeywords=[2]{on, off, interp},
+        % Put user defined functions here
+        morekeywords=[3]{FindESS},
+        morecomment=[l][\color{Blue}]{...},
+        numbers=left,
+        firstnumber=1,
+        numberstyle=\tiny\color{Blue},
+        stepnumber=5
+        }
+
+%\lstloadlanguages{R}
+%\lstdefinelanguage{Renhanced}[]{R}{%
+%  morekeywords={acf,ar,arima,arima.sim,colMeans,colSums,is.na,is.null,%
+%    mapply,ms,na.rm,nlmin,replicate,row.names,rowMeans,rowSums,seasonal,%
+%    sys.time,system.time,ts.plot,which.max,which.min,ts,subset,in,header,select,ylab,slab,act,pact,%
+%    main,line,side,spec.pgram,spec.ar,taper,lty,mfrow,lag.max},
+%  deletekeywords={c,data},
+%  morekeywords=[2]{TRUE, FALSE},
+%  alsoletter={.\%},%
+%  alsoother={:_\$}}
+%\lstset{language=Renhanced,extendedchars=true,
+%  basicstyle=\small\ttfamily,
+%  commentstyle=\color{MyDarkGreen}\textsl,
+%  keywordstyle=[1]\mdseries\color{Blue},
+%  keywordstyle=[2]\mdseries\color{Violet},
+%  identifierstyle=,
+%  showstringspaces=false,
+%  index=[1][keywords], 
+%  indexstyle=\indexfonction}
+
+\newcommand{\indexfonction}[1]{\index{#1@\texttt{#1}}}
+
+\usepackage{subfig}
+
+\renewcommand{\thesubfigure}{\thefigure.\arabic{subfigure}}
+\captionsetup[subfigure]{labelformat=simple,labelsep=colon,
+listofformat=subsimple}
+\captionsetup{lofdepth=2}
+\makeatletter
+\renewcommand{\p@subfigure}{}
+\makeatother
+\setlength\parindent{10pt}
+
+\renewcommand{\thesubtable}{\thetable.\arabic{subtable}}
+\captionsetup[subtable]{labelformat=simple,labelsep=colon,
+listofformat=subsimple}
+\captionsetup{lotdepth=2}
+\makeatletter
+\renewcommand{\p@subtable}{}
+\makeatother
+\captionsetup[subfigure]{position=bottom}
+
+%\def\sf@ifpositiontop{%
+%\ifx\caption@position\@firstoftwo \let\next\@firstoftwo \else
+%\let\next\@secondoftwo \fi \next}
+
+\graphicspath{{Figures/}}
+\title{\vspace{-3cm}Basic Model}
+\author{Rodrigo Azuero \& David Zarruk \thanks{Disclosure }}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+--Abstract-----
+\end{abstract}
+
+\section{Introduction}
+
+\section{Economic model}
+There are three types of agents in this model. Individuals, who supply labor and capital; firms, who produce a final good produced with capital, skilled labor and unskilled labor; and universities, who provide services of higher education in exchange for a tuition price. 
+\\[0.2in]
+Individuals are characterized by innate cognitive ability $\theta \in [0,1]$ and initial wealth level $b \in [0,\bar b]$. They derive utility from consumption and we assume they don't value leisure. Agents live for two periods and after the second one they die with probability one. In the first period they make educational decisions: if they decide to study they need to pay tuition costs $P_h$ and they will not be able to work. If they decide not study, they will work and receive wage $w_l$ for unskilled labor. In the second period, a person who decided to pursue higher education, will be able to graduate from college with probability given by the density $f(\theta)$ where we assume $\frac{\partial f(\theta)}{\partial \theta}\geq 0.$ If they graduate, in the second period they will be able to get a wage of $w_h$. 
+\subsection{Households}
+The problem of the households can be characterized by:
+
+\begin{align}
+& \max_{a\geq -\bar A, h \in \{0,1\}}  u(c)+\beta \mathbbm{E}_{\left[h'|h,\theta\right]}[u(c')]
+\\[0.2in]
+& \text{subject to }\nonumber
+\\[0.2in]
+& c \leq  w_l(1-h)+b -a-P_hh
+\\[0.2in]
+& c'\leq w_l(1-h')+w_h(h')+a(1+r) 
+\\[0.2in]
+& h' \text{ evolves according to the distribution } P(h'=1|h,\theta)=  f(h,\theta)
+\end{align}
+\subsection{Final good producer}
+The objective of the firm is to maximize profits using unskilled  and skilled labor and capital:
+\begin{align}
+	\max_{H,L,K}f(H,K,L)-rK-w_lL-w_hH
+\end{align}
+
+\subsection{Equilibrium}
+An equilibrium in this economy is characterized by allocations {}
+
+
+\newpage
+
+\bibliographystyle{apacite}
+\bibliography{educa}
+
+
+\end{document}
+
